@@ -79,7 +79,7 @@ private Object2DGrid agentSpace;
    * If no agent is found, returns null.
    * @param x X coordinate of the desired cell
    * @param y Y coordinate of the desired cell
-   * @return a pointer to the agent at X,Y, if any.
+   * @return a pointer to the agent at X,Y, if any.	
    */
   public RabbitsGrassSimulationAgent getAgentAt(int x, int y){
     RabbitsGrassSimulationAgent retVal = null;

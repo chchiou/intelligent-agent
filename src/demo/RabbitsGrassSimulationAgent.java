@@ -6,6 +6,11 @@ import java.awt.Color;
 import uchicago.src.sim.gui.Drawable;
 import uchicago.src.sim.gui.SimGraphics;
 import uchicago.src.sim.space.Object2DGrid;
+import java.awt.image.*;
+import java.io.*;
+import javax.imageio.*;
+import java.awt.Image;
+
 
 /**
  * Agent for the CarryDrop model.
@@ -23,11 +28,12 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   private int y;
   private int vX;
   private int vY;
-  private int grass;
   private int energy;
   private static int IDNumber = 0;
   private int ID;
   private RabbitsGrassSimulationSpace cdSpace;
+  private Image img;
+  
 
   /**
    * Constructor that takes the ranges of permissible life spans
@@ -37,11 +43,10 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   public RabbitsGrassSimulationAgent(int minLifeSpan, int maxLifeSpan){
     x = -1;
     y = -1;
-    grass = 0;
+    energy = 0;
     setVxVy();
     energy = 
         (int)((Math.random() * (maxLifeSpan - minLifeSpan)) + minLifeSpan);
-    //energy = (int) minLifeSpan;
     IDNumber++;
     ID = IDNumber;
   }
@@ -98,8 +103,8 @@ public class RabbitsGrassSimulationAgent implements Drawable{
    * Get the amount of grass held by this agent
    * @return the amount of grass this agent has
    */
-  public int getGrass(){
-    return grass;
+  public int getEnergy(){
+    return energy;
   }
   
   /**
@@ -107,9 +112,6 @@ public class RabbitsGrassSimulationAgent implements Drawable{
    * in its 'energy' variable.
    * @return the number of steps until this agent dies
    */
-  public int getEnergy(){
-    return energy;
-  }
 
   /**
    * Prints a report on this agent's status variables to
@@ -120,9 +122,7 @@ public class RabbitsGrassSimulationAgent implements Drawable{
                        " at " + 
                        x + ", " + y + 
                        " has " + 
-                       getGrass() + "grasses" + 
-                       " and " + 
-                       getEnergy() + " steps to live.");
+                       getEnergy() + " Energy.");
   }
 
   /**
@@ -149,6 +149,8 @@ public class RabbitsGrassSimulationAgent implements Drawable{
    */
   public void draw(SimGraphics G){
     if(energy > 0)
+//    G.drawImage(Image img);
+    
       G.drawFastRoundRect(Color.white);
     else
       G.drawFastRoundRect(Color.blue);
@@ -165,22 +167,18 @@ public class RabbitsGrassSimulationAgent implements Drawable{
     Object2DGrid grid = cdSpace.getCurrentAgentSpace();
     newX = (newX + grid.getSizeX()) % grid.getSizeX();
     newY = (newY + grid.getSizeY()) % grid.getSizeY();
-
+    
     if(tryMove(newX, newY)){
-      grass += cdSpace.takeGrassAt(x, y);
+      energy += cdSpace.takeGrassAt(x, y);
+      if (energy > 0){
+    	  energy--; 
+      };
     }
     else{
-      RabbitsGrassSimulationAgent cda = cdSpace.getAgentAt(newX, newY);
-      if (cda!= null){
-        if(grass > 0){
-          cda.receiveGrass(1);
-          grass--;
-        }
-      }
       setVxVy();
     }
-  }
-
+}
+  
   /**
    * Attempt a move to a new location.
    * @param newX the intended destination's X coordinate
@@ -199,9 +197,5 @@ public class RabbitsGrassSimulationAgent implements Drawable{
    */
   public void receiveGrass(int amount){
     energy += amount;
-  }
-  
-  public void reproduce(){
-	 energy--; 
   }
 }
