@@ -23,8 +23,8 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   private int y;
   private int vX;
   private int vY;
-  private int money;
-  private int stepsToLive;
+  private int grass;
+  private int energy;
   private static int IDNumber = 0;
   private int ID;
   private RabbitsGrassSimulationSpace cdSpace;
@@ -37,11 +37,11 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   public RabbitsGrassSimulationAgent(int minLifeSpan, int maxLifeSpan){
     x = -1;
     y = -1;
-    money = 0;
+    grass = 0;
     setVxVy();
-    stepsToLive = 
+    energy = 
         (int)((Math.random() * (maxLifeSpan - minLifeSpan)) + minLifeSpan);
-    //stepsToLive = (int) minLifeSpan;
+    //energy = (int) minLifeSpan;
     IDNumber++;
     ID = IDNumber;
   }
@@ -95,20 +95,20 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   }
 
   /**
-   * Get the amount of money held by this agent
-   * @return the amount of money this agent has
+   * Get the amount of grass held by this agent
+   * @return the amount of grass this agent has
    */
-  public int getMoney(){
-    return money;
+  public int getGrass(){
+    return grass;
   }
   
   /**
    * Get the number of steps this agent has remaining
-   * in its 'stepsToLive' variable.
+   * in its 'energy' variable.
    * @return the number of steps until this agent dies
    */
-  public int getStepsToLive(){
-    return stepsToLive;
+  public int getEnergy(){
+    return energy;
   }
 
   /**
@@ -120,9 +120,9 @@ public class RabbitsGrassSimulationAgent implements Drawable{
                        " at " + 
                        x + ", " + y + 
                        " has " + 
-                       getMoney() + " dollars" + 
+                       getGrass() + "grasses" + 
                        " and " + 
-                       getStepsToLive() + " steps to live.");
+                       getEnergy() + " steps to live.");
   }
 
   /**
@@ -148,7 +148,7 @@ public class RabbitsGrassSimulationAgent implements Drawable{
    * will be drawn
    */
   public void draw(SimGraphics G){
-    if(stepsToLive > 0)
+    if(energy > 0)
       G.drawFastRoundRect(Color.white);
     else
       G.drawFastRoundRect(Color.blue);
@@ -167,19 +167,18 @@ public class RabbitsGrassSimulationAgent implements Drawable{
     newY = (newY + grid.getSizeY()) % grid.getSizeY();
 
     if(tryMove(newX, newY)){
-      money += cdSpace.takeMoneyAt(x, y);
+      grass += cdSpace.takegrassAt(x, y);
     }
     else{
       RabbitsGrassSimulationAgent cda = cdSpace.getAgentAt(newX, newY);
       if (cda!= null){
-        if(money > 0){
-          cda.receiveMoney(1);
-          money--;
+        if(grass > 0){
+          cda.receiveGrass(1);
+          grass--;
         }
       }
       setVxVy();
     }
-    stepsToLive--;
   }
 
   /**
@@ -194,11 +193,15 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   }
 
   /**
-   * Receive an amount of money and put it in the agent's
+   * Receive an amount of grass and put it in the agent's
    * holdings.
-   * @param amount the amount of money received
+   * @param amount the amount of grass received
    */
-  public void receiveMoney(int amount){
-    money += amount;
+  public void receiveGrass(int amount){
+    energy += amount;
+  }
+  
+  public void reproduce(){
+	 energy--; 
   }
 }

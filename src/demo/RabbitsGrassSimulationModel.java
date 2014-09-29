@@ -24,12 +24,12 @@ import uchicago.src.sim.util.SimUtilities;
  * the basics of building a RePast model.
  * 
  * The model's dynamics are straightforward: a space
- * is populated with agents. Money is distributed on
- * the landscape; agents move and pick up money.
+ * is populated with agents. Grass is distributed on
+ * the landscape; agents move and pick up Grass.
  * When agents collide the agent that initiated the
- * collision gives one unit of money to the other agent.
+ * collision gives one unit of Grass to the other agent.
  * Agents have limited lifespans and when they die their
- * money is distributed randomly across the landscape.
+ * Grass is distributed randomly across the landscape.
  * 
  * @author John T. Murphy<br>
  * University of Arizona, Department of Anthropology<br>
@@ -41,15 +41,14 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
   private static final int WORLDXSIZE = 20;
   private static final int WORLDYSIZE = 20;
   private static final int GROWTHRATE = 100;
-  private static final int BRITHTHREHOLD = 100;
-  private static final int TOTALMONEY = 1000;
+  private static final int TOTALGrass = 1000;
   private static final int AGENT_MIN_LIFESPAN = 60;
   private static final int AGENT_MAX_LIFESPAN = 100;
 
   private int numAgents = NUMAGENTS;
   private int worldXSize = WORLDXSIZE;
   private int worldYSize = WORLDYSIZE;
-  private int money = TOTALMONEY;
+  private int Grass = TOTALGrass;
   private int agentMinLifespan = AGENT_MIN_LIFESPAN;
   private int agentMaxLifespan = AGENT_MAX_LIFESPAN;
 
@@ -61,24 +60,24 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
   private DisplaySurface displaySurf;
 
-  private OpenSequenceGraph amountOfMoneyInSpace;
+  private OpenSequenceGraph amountOfGrassInSpace;
   private OpenHistogram agentWealthDistribution;
 
-  class moneyInSpace implements DataSource, Sequence {
+  class GrassInSpace implements DataSource, Sequence {
 
     public Object execute() {
       return new Double(getSValue());
     }
 
     public double getSValue() {
-      return (double)cdSpace.getTotalMoney();
+      return (double)cdSpace.getTotalGrass();
     }
   }
 
-  class agentMoney implements BinDataSource{
+  class agentGrass implements BinDataSource{
     public double getBinValue(Object o) {
       RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)o;
-      return (double)cda.getMoney();
+      return (double)cda.getGrass();
     }
   }
 
@@ -106,10 +105,10 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     }
     displaySurf = null;
 
-    if (amountOfMoneyInSpace != null){
-      amountOfMoneyInSpace.dispose();
+    if (amountOfGrassInSpace != null){
+      amountOfGrassInSpace.dispose();
     }
-    amountOfMoneyInSpace = null;
+    amountOfGrassInSpace = null;
 
     if (agentWealthDistribution != null){
       agentWealthDistribution.dispose();
@@ -118,12 +117,12 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
     // Create Displays
     displaySurf = new DisplaySurface(this, "Rabbits Grass Model Window 1");
-    amountOfMoneyInSpace = new OpenSequenceGraph("Amount Of Money In Space",this);
+    amountOfGrassInSpace = new OpenSequenceGraph("Amount Of Grass In Space",this);
     agentWealthDistribution = new OpenHistogram("Agent Wealth", 8, 0);
 
     // Register Displays
     registerDisplaySurface("Rabbits Grass Model Window 1", displaySurf);
-    this.registerMediaProducer("Plot", amountOfMoneyInSpace);
+    this.registerMediaProducer("Plot", amountOfGrassInSpace);
   }
 
   /**
@@ -136,18 +135,18 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     buildDisplay();
 
     displaySurf.display();
-    amountOfMoneyInSpace.display();
+    amountOfGrassInSpace.display();
     agentWealthDistribution.display();
   }
 
   /**
    * Initialize the basic model by creating the space
-   * and populating it with money and agents.
+   * and populating it with Grass and agents.
    */
   public void buildModel(){
     System.out.println("Running BuildModel");
     cdSpace = new RabbitsGrassSimulationSpace(worldXSize, worldYSize);
-    cdSpace.spreadMoney(money);
+    cdSpace.spreadGrass(Grass);
 
     for(int i = 0; i < numAgents; i++){
       addNewAgent();
@@ -191,13 +190,13 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
     schedule.scheduleActionAtInterval(10, new CarryDropCountLiving());
 
-    class CarryDropUpdateMoneyInSpace extends BasicAction {
+    class CarryDropUpdateGrassInSpace extends BasicAction {
       public void execute(){
-        amountOfMoneyInSpace.step();
+        amountOfGrassInSpace.step();
       }
     }
 
-    schedule.scheduleActionAtInterval(10, new CarryDropUpdateMoneyInSpace());
+    schedule.scheduleActionAtInterval(10, new CarryDropUpdateGrassInSpace());
 
     class CarryDropUpdateAgentWealth extends BasicAction {
       public void execute(){
@@ -222,17 +221,17 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     }
     map.mapColor(0, Color.black);
 
-    Value2DDisplay displayMoney = 
-        new Value2DDisplay(cdSpace.getCurrentMoneySpace(), map);
+    Value2DDisplay displayGrass = 
+        new Value2DDisplay(cdSpace.getCurrentGrassSpace(), map);
 
     Object2DDisplay displayAgents = new Object2DDisplay(cdSpace.getCurrentAgentSpace());
     displayAgents.setObjectList(agentList);
 
-    displaySurf.addDisplayableProbeable(displayMoney, "Money");
+    displaySurf.addDisplayableProbeable(displayGrass, "Grass");
     displaySurf.addDisplayableProbeable(displayAgents, "Agents");
 
-    amountOfMoneyInSpace.addSequence("Money In Space", new moneyInSpace());
-    agentWealthDistribution.createHistogramItem("Agent Wealth",agentList,new agentMoney());
+    amountOfGrassInSpace.addSequence("Grass In Space", new GrassInSpace());
+    agentWealthDistribution.createHistogramItem("Agent Wealth",agentList,new agentGrass());
 
   }
 
@@ -247,16 +246,16 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
   /**
    * Collect any dead agents from the simulation and distribute
-   * their money around.
+   * their Grass around.
    * @return a count of the agents that died
    */
   private int reapDeadAgents(){
     int count = 0;
     for(int i = (agentList.size() - 1); i >= 0 ; i--){
       RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
-      if(cda.getStepsToLive() < 1){
+      if(cda.getEnergy() < 1){
         cdSpace.removeAgentAt(cda.getX(), cda.getY());
-        cdSpace.spreadMoney(cda.getMoney());
+        cdSpace.spreadGrass(cda.getGrass());
         agentList.remove(i);
         count++;
       }
@@ -272,7 +271,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     int livingAgents = 0;
     for(int i = 0; i < agentList.size(); i++){
       RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
-      if(cda.getStepsToLive() > 0) livingAgents++;
+      if(cda.getEnergy() > 0) livingAgents++;
     }
     System.out.println("Number of living agents is: " + livingAgents);
 
@@ -295,7 +294,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
    * that can be modified by the RePast user interface
    */
   public String[] getInitParam(){
-    String[] initParams = { "NumAgents", "WorldXSize", "WorldYSize", "Money", "AgentMinLifespan", "AgentMaxLifeSpan"};
+    String[] initParams = { "NumAgents", "WorldXSize", "WorldYSize", "Grass", "AgentMinLifespan", "AgentMaxLifeSpan"};
     return initParams;
   }
 
@@ -352,21 +351,21 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
   /**
    * Get the value of the parameter initializing the total amount
-   * of money in this model
-   * @return the initial value for the total amount of money in the
+   * of Grass in this model
+   * @return the initial value for the total amount of Grass in the
    * model
    */
-  public int getMoney() {
-    return money;
+  public int getGrass() {
+    return Grass;
   }
 
   /**
-   * Set the new value for the total amount of money to be used when
+   * Set the new value for the total amount of Grass to be used when
    * initializing the simulation
-   * @param i the new value for the total amount of money
+   * @param i the new value for the total amount of Grass
    */
-  public void setMoney(int i) {
-    money = i;
+  public void setGrass(int i) {
+    Grass = i;
   }
 
   /**

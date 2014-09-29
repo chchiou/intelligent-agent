@@ -7,7 +7,7 @@ import uchicago.src.sim.space.Object2DGrid;
  * Space object for the RabbitsGrassSimulationModel
  * 
  * Includes functions for placing agents into the space,
- * determining the amount of money at a given cell
+ * determining the amount of grass at a given cell
  * or in the entire space, moving agents, removing agents,
  * etc.
  * 
@@ -16,7 +16,7 @@ import uchicago.src.sim.space.Object2DGrid;
  * Arizona State University, Center for Environmental Studies
  */
 public class RabbitsGrassSimulationSpace {
-private Object2DGrid moneySpace;
+private Object2DGrid grassSpace;
 private Object2DGrid agentSpace;
 
   /**
@@ -26,47 +26,47 @@ private Object2DGrid agentSpace;
    * @param ySize size of Y dimension
    */
   public RabbitsGrassSimulationSpace(int xSize, int ySize){
-    moneySpace = new Object2DGrid(xSize, ySize);
+    grassSpace = new Object2DGrid(xSize, ySize);
     agentSpace = new Object2DGrid(xSize, ySize);
 
     for(int i = 0; i < xSize; i++){
       for(int j = 0; j < ySize; j++){
-        moneySpace.putObjectAt(i,j,new Integer(0));
+        grassSpace.putObjectAt(i,j,new Integer(0));
       }
     }
   }
 
   /**
-   * Randomly distributes an amount of money around
+   * Randomly distributes an amount of grass around
    * the landscape
-   * @param money the (total) amount of money to be distributed
+   * @param grass the (total) amount of grass to be distributed
    */
-  public void spreadMoney(int money){
-    // Randomly place money in moneySpace
-    for(int i = 0; i < money; i++){
+  public void spreadGrass(int grass){
+    // Randomly place grass in grassSpace
+    for(int i = 0; i < grass; i++){
 
       // Choose coordinates
-      int x = (int)(Math.random()*(moneySpace.getSizeX()));
-      int y = (int)(Math.random()*(moneySpace.getSizeY()));;
+      int x = (int)(Math.random()*(grassSpace.getSizeX()));
+      int y = (int)(Math.random()*(grassSpace.getSizeY()));;
 
       // Get the value of the object at those coordinates
-      int currentValue = getMoneyAt(x, y);
+      int currentValue = getgrassAt(x, y);
       // Replace the Integer object with another one with the new value
-      moneySpace.putObjectAt(x,y,new Integer(currentValue + 1));
+      grassSpace.putObjectAt(x,y,new Integer(currentValue + 1));
     }
   }
 
   /**
-   * Get the amount of money currently stored at
+   * Get the amount of grass currently stored at
    * the cell location specified
    * @param x X coordinate of the desired cell
    * @param y Y coordinate of the desired cell
-   * @return amount of money stored at cell X,Y
+   * @return amount of grass stored at cell X,Y
    */
-  public int getMoneyAt(int x, int y){
+  public int getgrassAt(int x, int y){
     int i;
-    if(moneySpace.getObjectAt(x,y)!= null){
-      i = ((Integer)moneySpace.getObjectAt(x,y)).intValue();
+    if(grassSpace.getObjectAt(x,y)!= null){
+      i = ((Integer)grassSpace.getObjectAt(x,y)).intValue();
     }
     else{
       i = 0;
@@ -90,11 +90,11 @@ private Object2DGrid agentSpace;
   }
 
   /**
-   * Get the 'money space' object
-   * @return the Object2DGrid object in which money is stored
+   * Get the 'grass space' object
+   * @return the Object2DGrid object in which grass is stored
    */
-  public Object2DGrid getCurrentMoneySpace(){
-    return moneySpace;
+  public Object2DGrid getCurrentGrassSpace(){
+    return grassSpace;
   }
 
   /**
@@ -156,15 +156,15 @@ private Object2DGrid agentSpace;
   }
 
   /**
-   * Removes the money found at the specified location
-   * @param x the X coordinate of the cell from which the money is to be removed
-   * @param y the Y coordinate of the cell from which the money is to be removed
-   * @return the amount of money collected from the cell
+   * Removes the grass found at the specified location
+   * @param x the X coordinate of the cell from which the grass is to be removed
+   * @param y the Y coordinate of the cell from which the grass is to be removed
+   * @return the amount of grass collected from the cell
    */
-  public int takeMoneyAt(int x, int y){
-    int money = getMoneyAt(x, y);
-    moneySpace.putObjectAt(x, y, new Integer(0));
-    return money;
+  public int takegrassAt(int x, int y){
+    int grass = getgrassAt(x, y);
+    grassSpace.putObjectAt(x, y, new Integer(0));
+    return grass;
   }
 
   /**
@@ -193,16 +193,16 @@ private Object2DGrid agentSpace;
   }
 
   /**
-   * Return the total money found in the landscape
-   * @return total money found in the landscape
+   * Return the total grass found in the landscape
+   * @return total grass found in the landscape
    */
-  public int getTotalMoney(){
-    int totalMoney = 0;
+  public int getTotalGrass(){
+    int totalgrass = 0;
     for(int i = 0; i < agentSpace.getSizeX(); i++){
       for(int j = 0; j < agentSpace.getSizeY(); j++){
-        totalMoney += getMoneyAt(i,j);
+        totalgrass += getgrassAt(i,j);
       }
     }
-    return totalMoney;
+    return totalgrass;
   }
 }
