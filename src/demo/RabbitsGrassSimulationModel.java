@@ -22,7 +22,6 @@ import uchicago.src.sim.util.SimUtilities;
 
 public class RabbitsGrassSimulationModel extends SimModelImpl {
   // Default Values
-  private static final int NUMAGENTS = 100;
   private static final int WORLDXSIZE = 50;
   private static final int WORLDYSIZE = 50;
   private static final int GROWTHRATE = 1000;
@@ -161,12 +160,13 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
           cda.step();
         }
 
-        int deadAgents = reapDeadAgents();
+        reapDeadAgents();
+        reproduceAgent();
+        
 //        for(int i =0; i < deadAgents; i++){
 //          addNewAgent();
 //        }
         
-        reproduceAgent();
         displaySurf.updateDisplay();       
         }
     }
@@ -424,5 +424,4 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     RabbitsGrassSimulationModel model = new RabbitsGrassSimulationModel();
     init.loadModel(model, "", false);
   }
-
 }
