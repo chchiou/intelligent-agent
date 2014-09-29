@@ -161,7 +161,7 @@ private Object2DGrid agentSpace;
    * @param y the Y coordinate of the cell from which the grass is to be removed
    * @return the amount of grass collected from the cell
    */
-  public int takegrassAt(int x, int y){
+  public int takeGrassAt(int x, int y){
     int grass = getgrassAt(x, y);
     grassSpace.putObjectAt(x, y, new Integer(0));
     return grass;

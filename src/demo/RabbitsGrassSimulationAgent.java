@@ -167,7 +167,7 @@ public class RabbitsGrassSimulationAgent implements Drawable{
     newY = (newY + grid.getSizeY()) % grid.getSizeY();
 
     if(tryMove(newX, newY)){
-      grass += cdSpace.takegrassAt(x, y);
+      grass += cdSpace.takeGrassAt(x, y);
     }
     else{
       RabbitsGrassSimulationAgent cda = cdSpace.getAgentAt(newX, newY);

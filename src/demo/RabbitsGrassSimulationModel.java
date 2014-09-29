@@ -19,36 +19,21 @@ import uchicago.src.sim.gui.Object2DDisplay;
 import uchicago.src.sim.gui.Value2DDisplay;
 import uchicago.src.sim.util.SimUtilities;
 
-/**
- * RabbitsGrassSimulationModel is a RePast model that demonstrates
- * the basics of building a RePast model.
- * 
- * The model's dynamics are straightforward: a space
- * is populated with agents. Grass is distributed on
- * the landscape; agents move and pick up Grass.
- * When agents collide the agent that initiated the
- * collision gives one unit of Grass to the other agent.
- * Agents have limited lifespans and when they die their
- * Grass is distributed randomly across the landscape.
- * 
- * @author John T. Murphy<br>
- * University of Arizona, Department of Anthropology<br>
- * Arizona State University, Center for Environmental Studies
- */
+
 public class RabbitsGrassSimulationModel extends SimModelImpl {
   // Default Values
   private static final int NUMAGENTS = 100;
-  private static final int WORLDXSIZE = 20;
-  private static final int WORLDYSIZE = 20;
+  private static final int WORLDXSIZE = 50;
+  private static final int WORLDYSIZE = 50;
   private static final int GROWTHRATE = 100;
-  private static final int TOTALGrass = 1000;
+  private static final int TOTALGRASS = 1000;
   private static final int AGENT_MIN_LIFESPAN = 60;
   private static final int AGENT_MAX_LIFESPAN = 100;
 
   private int numAgents = NUMAGENTS;
   private int worldXSize = WORLDXSIZE;
   private int worldYSize = WORLDYSIZE;
-  private int Grass = TOTALGrass;
+  private int grass = GROWTHRATE;
   private int agentMinLifespan = AGENT_MIN_LIFESPAN;
   private int agentMaxLifespan = AGENT_MAX_LIFESPAN;
 
@@ -97,7 +82,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     System.out.println("Running setup");
     cdSpace = null;
     agentList = new ArrayList();
-    schedule = new Schedule(1);
+    schedule = new Schedule(5);
 
     // Tear down Displays
     if (displaySurf != null){
@@ -141,12 +126,12 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 
   /**
    * Initialize the basic model by creating the space
-   * and populating it with Grass and agents.
+   * and populating it with grass and agents.
    */
   public void buildModel(){
     System.out.println("Running BuildModel");
     cdSpace = new RabbitsGrassSimulationSpace(worldXSize, worldYSize);
-    cdSpace.spreadGrass(Grass);
+    cdSpace.spreadGrass(grass);
 
     for(int i = 0; i < numAgents; i++){
       addNewAgent();
@@ -205,6 +190,14 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     }
 
     schedule.scheduleActionAtInterval(10, new CarryDropUpdateAgentWealth());
+    
+    class SimulationSpreadGrass extends BasicAction{
+    	public void execute(){
+    		cdSpace.spreadGrass(GROWTHRATE);
+    		displaySurf.updateDisplay();  
+    	}
+    }
+    schedule.scheduleActionAtInterval(20, new SimulationSpreadGrass());
   }
 
   /**
@@ -255,7 +248,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
       RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
       if(cda.getEnergy() < 1){
         cdSpace.removeAgentAt(cda.getX(), cda.getY());
-        cdSpace.spreadGrass(cda.getGrass());
+//        cdSpace.spreadGrass(cda.getGrass());
         agentList.remove(i);
         count++;
       }
@@ -356,7 +349,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
    * model
    */
   public int getGrass() {
-    return Grass;
+    return grass;
   }
 
   /**
@@ -365,7 +358,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
    * @param i the new value for the total amount of Grass
    */
   public void setGrass(int i) {
-    Grass = i;
+    grass = i;
   }
 
   /**
