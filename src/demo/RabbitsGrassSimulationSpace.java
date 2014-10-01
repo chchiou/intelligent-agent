@@ -1,4 +1,4 @@
-// CarryDropSpace
+// RabbitsGrassSpace
 package demo;
 
 import uchicago.src.sim.space.Object2DGrid; 
