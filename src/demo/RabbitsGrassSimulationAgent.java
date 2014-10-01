@@ -28,6 +28,7 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   private static int IDNumber = 0;
   private int ID;
   private RabbitsGrassSimulationSpace cdSpace;
+  private int reproduceNumber = 0;
   
 
   /**
@@ -74,7 +75,18 @@ public class RabbitsGrassSimulationAgent implements Drawable{
     x = newX;
     y = newY;
   }
+  
+  public void setEnergy(int newEnergy){
+	  
+	  energy = newEnergy;
+  }
+  public int getReproduceNumber(){
+	  return reproduceNumber;
+  }
 
+  public void setReproduceNumber(int newRN){
+	  reproduceNumber = newRN;
+  }
   /**
    * Set this agent's pointer to the space object
    * in which it resides.
