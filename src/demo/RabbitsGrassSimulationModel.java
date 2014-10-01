@@ -22,13 +22,13 @@ import uchicago.src.sim.util.SimUtilities;
 
 public class RabbitsGrassSimulationModel extends SimModelImpl {
   // Default Values
-  private static final int WORLDXSIZE = 10;
-  private static final int WORLDYSIZE = 10;
+  private static final int WORLDXSIZE = 20;
+  private static final int WORLDYSIZE = 20;
   private static final int GROWTHRATE = 100;
-  private static final int AGENT_MIN_LIFESPAN = 30;
-  private static final int AGENT_MAX_LIFESPAN = 50;
+  private static final int AGENT_MIN_LIFESPAN = 60;
+  private static final int AGENT_MAX_LIFESPAN = 100;
   private static final int BRITHTHRESHOLD = 80;
-  private static final int INITIALNUMBER = 1;
+  private static final int INITIALNUMBER = 100;
 
   private int worldXSize = WORLDXSIZE;
   private int worldYSize = WORLDYSIZE;
@@ -151,7 +151,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
   public void buildModel(){
     System.out.println("Running BuildModel");
     cdSpace = new RabbitsGrassSimulationSpace(worldXSize, worldYSize);
-    cdSpace.spreadGrass(brithThreshold);
+    cdSpace.spreadGrass(growthRate);
 
     for(int i = 0; i < initialNumber; i++){
       addNewAgent();
@@ -265,8 +265,10 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
   private void reproduceAgent(){
 	   for(int i = (agentList.size() - 1); i >= 0; i--){
 	    RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
-	    if (cda.getEnergy() > 100){
-	     addNewAgent();
+	    if ((cda.getEnergy() > brithThreshold) && (cda.getReproduceNumber() != 1)){
+	    	addNewAgent();
+	    	cda.setEnergy(cda.getEnergy() - 60);
+	    	cda.setReproduceNumber(1);
 	    }
 	   }
   }
