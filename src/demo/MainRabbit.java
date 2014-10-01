@@ -6,5 +6,4 @@ public class MainRabbit {
 	RabbitsGrassSimulationModel.main(args);
 
     } 
-
 }

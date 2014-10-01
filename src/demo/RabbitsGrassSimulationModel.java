@@ -22,10 +22,10 @@ import uchicago.src.sim.util.SimUtilities;
 
 public class RabbitsGrassSimulationModel extends SimModelImpl {
   // Default Values
-  private static final int WORLDXSIZE = 20;
-  private static final int WORLDYSIZE = 20;
+  private static final int WORLDXSIZE = 50;
+  private static final int WORLDYSIZE = 50;
   private static final int GROWTHRATE = 100;
-  private static final int AGENT_MIN_LIFESPAN = 60;
+  private static final int AGENT_MIN_LIFESPAN = 50;
   private static final int AGENT_MAX_LIFESPAN = 100;
   private static final int BRITHTHRESHOLD = 80;
   private static final int INITIALNUMBER = 100;
@@ -67,7 +67,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 		  return new Double(getSValue());		  
 	  }
 	  public double getSValue(){
-		  return (double) getTotalEgent();
+		  return (double) countLivingAgents();
 	  }
   }
 
@@ -120,7 +120,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     // Create Displays
     displaySurf = new DisplaySurface(this, "Rabbits Grass Model Window 1");
     amountOfGrassInSpace = new OpenSequenceGraph("Amount Of Grass In Space",this);
-    amountOfEgent = new OpenSequenceGraph("Amount of Agent", this);
+    amountOfEgent = new OpenSequenceGraph("Amount of Rabbits", this);
     agentenergyDistribution = new OpenHistogram("Agent energy", 8, 0);
 
     // Register Displays
@@ -265,10 +265,11 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
   private void reproduceAgent(){
 	   for(int i = (agentList.size() - 1); i >= 0; i--){
 	    RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
-	    if ((cda.getEnergy() > brithThreshold) && (cda.getReproduceNumber() != 1)){
+//	    if ((cda.getEnergy() > brithThreshold) && (cda.getReproduceNumber() != 1)){
+	    if (cda.getEnergy() > brithThreshold) {
 	    	addNewAgent();
 	    	cda.setEnergy(cda.getEnergy() - 60);
-	    	cda.setReproduceNumber(1);
+//	    	cda.setReproduceNumber(1);
 	    }
 	   }
   }
@@ -296,23 +297,19 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
    * Get a count of the living agents on the model's agent list.
    * @return count of the living agents on the agent list
    */
-  private int countLivingAgents(){
-    int livingAgents = 0;
-    for(int i = 0; i < agentList.size(); i++){
-      RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
-      if(cda.getEnergy() > 0) livingAgents++;
-    }
-    System.out.println("Number of living Rabbits is: " + livingAgents);
-    return livingAgents;
-  }
+//  private int countLivingAgents(){
+//    int livingAgents = 0;
+//    for(int i = 0; i < agentList.size(); i++){
+//      RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
+//      if(cda.getEnergy() > 0) livingAgents++;
+//    }
+//    System.out.println("Number of living Rabbits is: " + livingAgents);
+//    return livingAgents;
+//  }
   
-  private int getTotalEgent(){
-	    int livingAgents = 0;
-	    for(int i = 0; i < agentList.size(); i++){
-	      RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
-	      if(cda.getEnergy() > 0) livingAgents++;
-	    }
-	    //System.out.println("Number of living Rabbits is: " + livingAgents);
+  private int countLivingAgents(){
+	    int livingAgents = agentList.size();
+	    System.out.println("Number of living Rabbits is: " + livingAgents);
 	    return livingAgents;
 	  }
 
@@ -455,5 +452,4 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     RabbitsGrassSimulationModel model = new RabbitsGrassSimulationModel();
     init.loadModel(model, "", false);
   }
-
 }
