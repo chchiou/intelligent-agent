@@ -1,4 +1,4 @@
-// CarryDropAgent
+// RabbitsGrassAgent
 package demo;
 
 import java.awt.Color;
@@ -6,14 +6,10 @@ import java.awt.Color;
 import uchicago.src.sim.gui.Drawable;
 import uchicago.src.sim.gui.SimGraphics;
 import uchicago.src.sim.space.Object2DGrid;
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.*;
-import java.awt.Image;
 
 
 /**
- * Agent for the CarryDrop model.
+ * Agent for the RabbitsGrass model.
  * 
  * The agent includes basic internal variables, methods
  * for modifying an agent's position and direction,
@@ -32,7 +28,6 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   private static int IDNumber = 0;
   private int ID;
   private RabbitsGrassSimulationSpace cdSpace;
-  private Image img;
   
 
   /**
@@ -60,7 +55,7 @@ public class RabbitsGrassSimulationAgent implements Drawable{
   private void setVxVy(){
     vX = 0;
     vY = 0;
-    while((vX == 0) && ( vY == 0)){
+    while(vX*vY!=0 || vX+vY == 0){
       vX = (int)Math.floor(Math.random() * 3) - 1;
       vY = (int)Math.floor(Math.random() * 3) - 1;
     }
@@ -173,9 +168,10 @@ public class RabbitsGrassSimulationAgent implements Drawable{
     	  energy--; 
       };
     }
-    else{
-      setVxVy();
-    }
+    setVxVy();
+//    else{
+//      setVxVy();
+//    }
 }
   
   /**
