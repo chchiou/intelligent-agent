@@ -24,9 +24,9 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
   // Default Values
   private static final int WORLDXSIZE = 50;
   private static final int WORLDYSIZE = 50;
-  private static final int GROWTHRATE = 100;
+  private static final int GROWTHRATE = 0;
   private static final int AGENT_MIN_LIFESPAN = 50;
-  private static final int AGENT_MAX_LIFESPAN = 100;
+  private static final int AGENT_MAX_LIFESPAN = 70;
   private static final int BRITHTHRESHOLD = 80;
   private static final int INITIALNUMBER = 100;
 
@@ -61,7 +61,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
       return (double)cdSpace.getTotalGrass();
     }
   }
-  
+  // For recording and display the number of rabbits
   class EgentInSpace implements DataSource, Sequence{
 	  public Object execute(){
 		  return new Double(getSValue());		  
@@ -126,7 +126,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     // Register Displays
     registerDisplaySurface("Rabbits Grass Model Window 1", displaySurf);
     this.registerMediaProducer("Plot", amountOfGrassInSpace);
-    this.registerMediaProducer("Plot", amountOfEgent);
+    this.registerMediaProducer("Plot", amountOfEgent); 
   }
 
   /**
@@ -209,7 +209,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     class CarryDropUpdateAgentenergy extends BasicAction {
       public void execute(){
         agentenergyDistribution.step();
-        amountOfEgent.step();
+        amountOfEgent.step(); 
       }
     }
 
@@ -217,7 +217,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     
     class SimulationSpreadGrass extends BasicAction{
     	public void execute(){
-    		cdSpace.spreadGrass(GROWTHRATE);
+    		cdSpace.spreadGrass(growthRate);
     		displaySurf.updateDisplay();  
     	}
     }
@@ -262,6 +262,7 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
     cdSpace.addAgent(a);
   }
   
+  // reproduce when a rabbit has enough energy and then remove some energy
   private void reproduceAgent(){
 	   for(int i = (agentList.size() - 1); i >= 0; i--){
 	    RabbitsGrassSimulationAgent cda = (RabbitsGrassSimulationAgent)agentList.get(i);
@@ -306,7 +307,10 @@ public class RabbitsGrassSimulationModel extends SimModelImpl {
 //    System.out.println("Number of living Rabbits is: " + livingAgents);
 //    return livingAgents;
 //  }
-  
+  /**
+   * Get a count of the living agents on the model's agent list.
+   * @return count of the living agents on the agent list
+   */
   private int countLivingAgents(){
 	    int livingAgents = agentList.size();
 	    System.out.println("Number of living Rabbits is: " + livingAgents);

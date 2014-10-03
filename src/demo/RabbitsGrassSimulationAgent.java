@@ -51,7 +51,7 @@ public class RabbitsGrassSimulationAgent implements Drawable{
    * Set this agent's velocity in the X and Y directon
    * Actually chooses a new velocity randomly; velocity
    * will be one of the 8 possible variations where
-   * X and Y are -1, 0, or 1 and Y but both are not zero 
+   * X and Y are -1, 0, or 1 and Y but both are not zero and both are not non-zero
    */
   private void setVxVy(){
     vX = 0;
